@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nolガチャ</title>
+    <style>
+        /* 1. 画面全体の配置 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 500px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #gacha-machine {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+
+        #status {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            min-height: 2.8rem;
+        }
+
+        #result-box {
+            background: #f0f2f5;
+            border-radius: 20px;
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 35px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #result {
+            font-size: 2.0rem;
+            font-weight: bold;
+            margin: 0;
+            width: 100%;
+            line-height: 1.3;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            display: block;
+            word-break: break-all;
+        }
+
+        #gacha-btn {
+            display: block;
+            width: 100%;
+            padding: 22px;
+            font-size: 2rem;
+            font-weight: bold;
+            background-color: #ff5e78;
+            color: white;
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            box-shadow: 0 7px 0 #d43f56;
+            transition: all 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        #gacha-btn:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        #gacha-btn:disabled {
+            background-color: #ffadb9;
+            box-shadow: none;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div id="gacha-machine">
+            <p id="status">運試しをしよう！</p>
+            <div id="result-box">
+                <h1 id="result">？</h1>
+            </div>
+            <button id="gacha-btn">ガチャを回す</button>
+        </div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('gacha-btn');
+        const resultDisp = document.getElementById('result');
+        const statusDisp = document.getElementById('status');
+
+        // 新しい景品リスト
+        const gachaList = [
+            { name: "✨️✨300,000nol✨✨", weight: 1 },
+            { name: "電動自転車", weight: 1 },
+            { name: "イカ・タコ・フグ豪華海鮮セット", weight: 1 },
+            { name: "ガムシロップ 1 年分", weight: 1 },
+            { name: "祭りの内輪", weight: 2 },
+            { name: "✨✨大蜘蛛弾襄ブロマイド✨✨", weight: 4 },
+            { name: "✨100,000nol✨", weight: 3 },
+            { name: "✨50,000nol✨", weight: 5 },
+            { name: "✨30,000nol✨", weight: 4 },
+            { name: "京のお抹茶セット(茶道具付き)", weight: 2 },
+            { name: "季節の御干菓子(詰め合わせ)", weight: 2 },
+            { name: "✨ガチャチケット3回分✨", weight: 3 },
+            { name: "10,000nol", weight: 5 },
+            { name: "✨幸福の糸✨", weight: 9 },
+            { name: "京漬物3種セット", weight: 4 },
+            { name: "バールのようなもの", weight: 2 },
+            { name: "首とか腕に巻けるチェーン", weight: 2 },
+            { name: "京のおだし茶漬け(6食分)", weight: 3 },
+            { name: "✨日めくり大蜘蛛弾襄✨", weight: 4 },
+            { name: "✨ぬいぐるみ大蜘蛛弾襄✨", weight: 1 },
+            { name: "怪しい白い粉", weight: 1 },
+            { name: "✨トリプルサングラス✨", weight: 1 },
+            { name: "何かの肉(冷凍)", weight: 2 },
+            { name: "5,000nol", weight: 6 },
+            { name: "1,000nol", weight: 3 },
+            { name: "よく燃えるマッチ", weight: 1 },
+            { name: "ピッカピカの鉄パイプ", weight: 4 },
+            { name: "ポケットティッシュ", weight: 23 }
+        ];
+
+        btn.onclick = function() {
+            btn.disabled = true;
+            statusDisp.innerText = "抽選中...";
+            resultDisp.innerText = "⏳";
+
+            // スロット演出（50ミリ秒ごとにランダム表示）
+            const shuffle = setInterval(() => {
+                resultDisp.innerText = gachaList[Math.floor(Math.random() * gachaList.length)].name;
+            }, 50);
+
+            setTimeout(() => {
+                clearInterval(shuffle);
+
+                // 重み付き抽選ロジック
+                const totalWeight = gachaList.reduce((sum, item) => sum + item.weight, 0);
+                let randomNum = Math.random() * totalWeight;
+                
+                let selectedItem = gachaList[gachaList.length - 1]; 
+                for (const item of gachaList) {
+                    if (randomNum < item.weight) {
+                        selectedItem = item;
+                        break;
+                    }
+                    randomNum -= item.weight;
+                }
+
+                // 結果表示
+                resultDisp.innerText = selectedItem.name;
+                statusDisp.innerText = "結果発表！";
+
+                // 特賞演出（300,000nol または 大蜘蛛弾襄関連のレアアイテム）
+                if (selectedItem.name.includes("300,000") || selectedItem.name.includes("大蜘蛛弾襄")) {
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#ff5e78', '#ffd700', '#ffffff'] // ピンク、金、白のお祝いカラー
+                    });
+                }
+
+                btn.disabled = false;
+            }, 1500);
+        };
+    </script>
+</body>
+</html>
