@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>nolガチャ</title>
     <style>
-        /* 1. 画面全体の配置 */
         body, html {
             margin: 0;
             padding: 0;
@@ -18,14 +17,12 @@
             font-family: sans-serif;
             overflow: hidden;
         }
-
         .container {
             width: 95%;
             max-width: 500px;
             padding: 10px;
             box-sizing: border-box;
         }
-
         #gacha-machine {
             background: white;
             padding: 40px 20px;
@@ -33,7 +30,6 @@
             box-shadow: 0 20px 45px rgba(0,0,0,0.12);
             text-align: center;
         }
-
         #status {
             font-size: 2.2rem;
             font-weight: bold;
@@ -41,7 +37,6 @@
             margin-bottom: 25px;
             min-height: 2.8rem;
         }
-
         #result-box {
             background: #f0f2f5;
             border-radius: 20px;
@@ -53,7 +48,6 @@
             padding: 20px;
             box-sizing: border-box;
         }
-
         #result {
             font-size: 2.0rem;
             font-weight: bold;
@@ -65,7 +59,6 @@
             display: block;
             word-break: break-all;
         }
-
         #gacha-btn {
             display: block;
             width: 100%;
@@ -82,12 +75,10 @@
             appearance: none;
             -webkit-appearance: none;
         }
-
         #gacha-btn:active {
             transform: translateY(5px);
             box-shadow: none;
         }
-
         #gacha-btn:disabled {
             background-color: #ffadb9;
             box-shadow: none;
@@ -96,7 +87,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-
     <div class="container">
         <div id="gacha-machine">
             <p id="status">運試しをしよう！</p>
@@ -106,62 +96,55 @@
             <button id="gacha-btn">ガチャを回す</button>
         </div>
     </div>
-
     <script>
         const btn = document.getElementById('gacha-btn');
         const resultDisp = document.getElementById('result');
         const statusDisp = document.getElementById('status');
-
-        // 新しい景品リスト
         const gachaList = [
             { name: "✨️✨300,000nol✨✨", weight: 1 },
-            { name: "電動自転車", weight: 1 },
-            { name: "タコ・カニ・フグ豪華海鮮セット", weight: 1 },
-            { name: "ガムシロップ 1 年分(※一般の方を基準として)", weight: 1 },
-            { name: "祭りの団扇", weight: 2 },
-            { name: "✨✨大蜘蛛弾襄ブロマイド✨✨", weight: 4 },
+            { name: "✨✨光る！LEDフラッグ✨✨", weight: 1 },
+            { name: "✨『立ち上がる力』(著: 大蜘蛛弾襄)✨", weight: 3 },
+            { name: "🕸️スピーカーくん1stグラビア写真集🕸️", weight: 1 },
+            { name: "🕸️プラモデル1/100スケールスピーカー(大蜘蛛)🕸️", weight: 2 },
+            { name: "🕸️スピーカー蜘蛛くんアクリルチャーム🕸️", weight: 3 },
+            { name: "✨️楽園の糸✨️", weight: 8 },
+            { name: "✨おすわり弾襄くん(ぬい)✨", weight: 3 },
+            { name: "✨ハンドスピナー(大蜘蛛)✨", weight: 3 },
+            { name: "✨4月始まりスケジュール帳(糸の会ロゴ)✨", weight: 1 },
             { name: "✨100,000nol✨", weight: 3 },
             { name: "✨50,000nol✨", weight: 5 },
-            { name: "✨30,000nol✨", weight: 4 },
-            { name: "京のお抹茶セット(茶道具付き)", weight: 2 },
-            { name: "季節の御干菓子(詰め合わせ)", weight: 2 },
+            { name: "✨10,000nol✨", weight: 4 },
             { name: "✨ガチャチケット3回分✨", weight: 3 },
-            { name: "10,000nol", weight: 5 },
-            { name: "✨幸福の糸✨", weight: 9 },
-            { name: "京漬物3種セット", weight: 4 },
-            { name: "バールのようなもの", weight: 2 },
-            { name: "首とか腕に巻けるチェーン", weight: 2 },
-            { name: "京のおだし茶漬け(6食分)", weight: 3 },
-            { name: "✨日めくり大蜘蛛弾襄✨", weight: 4 },
-            { name: "✨ぬいぐるみ大蜘蛛弾襄✨", weight: 1 },
-            { name: "怪しい白い粉", weight: 1 },
-            { name: "✨トリプルサングラス✨", weight: 1 },
-            { name: "何かの肉(冷凍)", weight: 2 },
             { name: "5,000nol", weight: 6 },
             { name: "1,000nol", weight: 3 },
-            { name: "よく燃えるマッチ", weight: 1 },
-            { name: "ピッカピカの鉄パイプ", weight: 4 },
-            { name: "ポケットティッシュ", weight: 23 }
+            { name: "京のおばんざい8種セット", weight: 2 },
+            { name: "京のお花見和菓子詰め合わせ", weight: 5 },
+            { name: "電動自転車", weight: 2 },
+            { name: "レア・ブロマイド寶井灯依里", weight: 2 },
+            { name: "㊥混入したポストカード(中王区ロゴ)㊥", weight: 3 },
+            { name: "怪しい錠剤(※ブドウ糖)", weight: 2 },
+            { name: "リングライトキャンディ(任意の色)", weight: 4 },
+            { name: "地獄のピーヒャラ(吹き戻し)", weight: 2 },
+            { name: "スリンキー(レインボースプリング)", weight: 1 },
+            { name: "スピログラフ(くるくる定規)", weight: 1 },
+            { name: "ボタン電池CR2032×3個", weight: 3 },
+            { name: "ボタン電池CR1220×5個", weight: 3 },
+            { name: "リングライト3個(任意の色)", weight: 3 },
+            { name: "ライトブレスレット2個(任意の色)", weight: 3 },
+            { name: "ポケットティッシュ", weight: 14 }
         ];
-
         btn.onclick = function() {
             btn.disabled = true;
             statusDisp.innerText = "抽選中...";
             resultDisp.innerText = "⏳";
-
-            // スロット演出（50ミリ秒ごとにランダム表示）
             const shuffle = setInterval(() => {
                 resultDisp.innerText = gachaList[Math.floor(Math.random() * gachaList.length)].name;
             }, 50);
-
             setTimeout(() => {
                 clearInterval(shuffle);
-
-                // 重み付き抽選ロジック
                 const totalWeight = gachaList.reduce((sum, item) => sum + item.weight, 0);
                 let randomNum = Math.random() * totalWeight;
-                
-                let selectedItem = gachaList[gachaList.length - 1]; 
+                let selectedItem = gachaList[gachaList.length - 1];
                 for (const item of gachaList) {
                     if (randomNum < item.weight) {
                         selectedItem = item;
@@ -169,21 +152,16 @@
                     }
                     randomNum -= item.weight;
                 }
-
-                // 結果表示
                 resultDisp.innerText = selectedItem.name;
                 statusDisp.innerText = "結果発表！";
-
-                // 特賞演出（300,000nol または 大蜘蛛弾襄関連のレアアイテム）
                 if (selectedItem.name.includes("300,000") || selectedItem.name.includes("大蜘蛛弾襄")) {
                     confetti({
                         particleCount: 150,
                         spread: 70,
                         origin: { y: 0.6 },
-                        colors: ['#ff5e78', '#ffd700', '#ffffff'] // ピンク、金、白のお祝いカラー
+                        colors: ['#ff5e78', '#ffd700', '#ffffff']
                     });
                 }
-
                 btn.disabled = false;
             }, 1500);
         };
